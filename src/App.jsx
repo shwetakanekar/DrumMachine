@@ -1,6 +1,27 @@
+import { useEffect } from 'react';
 import './App.css';
 
 function App() {
+  useEffect(() => {
+    let drumKeys = document.getElementsByClassName('drum-pad');
+    for (let drumKey of drumKeys) {
+      let audioId = drumKey.innerText;
+      drumKey.addEventListener('click', () => playSound(audioId));
+    }
+
+    return () => {
+      for (let drumKey of drumKeys) {
+        let audioId = drumKey.innerText;
+        drumKey.removeEventListener('click', () => playSound(audioId));
+      }
+    };
+  });
+
+  const playSound = (audioId) => {
+    let sound = document.getElementById(audioId);
+    sound.play();
+  };
+
   return (
     <>
       <div id="drum-machine">
