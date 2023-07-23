@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import './App.css';
 
 function App() {
+  const keys = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C'];
+
   useEffect(() => {
     let drumKeys = document.getElementsByClassName('drum-pad');
     for (let drumKey of drumKeys) {
@@ -9,11 +11,22 @@ function App() {
       drumKey.addEventListener('click', () => playSound(audioId));
     }
 
+    document.addEventListener('keydown', (event) => {
+      if(keys.includes(event.key.toUpperCase())) {
+        playSound(event.key.toUpperCase());
+      }
+    });
+
     return () => {
       for (let drumKey of drumKeys) {
         let audioId = drumKey.innerText;
         drumKey.removeEventListener('click', () => playSound(audioId));
       }
+      document.removeEventListener('keydown', (event) => {
+        if(keys.includes(event.key.toUpperCase())) {
+          playSound(event.key.toUpperCase());
+        }
+      });
     };
   });
 
