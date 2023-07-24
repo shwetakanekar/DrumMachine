@@ -6,14 +6,19 @@ function App() {
 
   useEffect(() => {
     let drumKeys = document.getElementsByClassName('drum-pad');
+    let display = document.getElementById('display');
     for (let drumKey of drumKeys) {
       let audioId = drumKey.innerText;
-      drumKey.addEventListener('click', () => playSound(audioId));
+      drumKey.addEventListener('click', () => {
+        playSound(audioId);
+        display.innerText = drumKey.id.replace(/-/g, ' ');
+      });
     }
 
     document.addEventListener('keydown', (event) => {
       if(keys.includes(event.key.toUpperCase())) {
         playSound(event.key.toUpperCase());
+        display.innerText = document.getElementById(event.key.toUpperCase()).parentElement.id.replace(/-/g, ' ');
       }
     });
 
