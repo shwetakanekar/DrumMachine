@@ -1,0 +1,32 @@
+#drum-machine {
+    display: flex;
+    margin: 5rem auto;
+    padding: 1rem;
+    width: 50%;
+    border: 1px solid black;
+    justify-content: space-around;
+    align-items: center;
+    max-width: 624px;
+}
+
+#drum-keys {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 50%;
+}
+
+#drum-controls {
+    width: 50%;
+}
+
+.drum-pad {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2rem;
+    width: 2rem;
+    border: 2px solid black;
+    padding: 1rem;
+    margin: 0.5rem;
+}
