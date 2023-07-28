@@ -1,24 +1,25 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 
 function App() {
   const keys = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C'];
 
+  let [displayValue, updateDisplayValue] = useState('');
+
   useEffect(() => {
     let drumKeys = document.getElementsByClassName('drum-pad');
-    let display = document.getElementById('display');
     for (let drumKey of drumKeys) {
       let audioId = drumKey.innerText;
       drumKey.addEventListener('click', () => {
         playSound(audioId);
-        display.innerText = drumKey.id.replace(/-/g, ' ');
+        updateDisplayValue(drumKey.id.replace(/-/g, ' '));
       });
     }
 
     document.addEventListener('keydown', (event) => {
       if(keys.includes(event.key.toUpperCase())) {
         playSound(event.key.toUpperCase());
-        display.innerText = document.getElementById(event.key.toUpperCase()).parentElement.id.replace(/-/g, ' ');
+        updateDisplayValue(document.getElementById(event.key.toUpperCase()).parentElement.id.replace(/-/g, ' '));
       }
     });
 
@@ -118,7 +119,7 @@ function App() {
           </div>
         </div>
         <div id="drum-controls">
-          <div id="display"></div>
+          <div id="display">{displayValue}</div>
         </div>
       </div>
     </>
