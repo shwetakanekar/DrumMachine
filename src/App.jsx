@@ -5,24 +5,42 @@ import './App.css';
 function App() {
   
   let [displayValue, updateDisplayValue] = useState('');
-  let [power, updatePower] = useState(false);
+  let [power, updatePower] = useState(true);
   let powerRef = useRef(power);
+  let powerIconStyle = {
+    backgroundColor: '#980000'
+  };
+  let displayStyle = {
+    backgroundColor: '#6b7d32'
+  }
+  if (power) {
+    powerIconStyle = {
+      backgroundColor: '#ff0000'
+    };
+    displayStyle = {
+      backgroundColor: '#bcdc5a'
+    }
+  }
   
   useEffect(() => {
     const keys = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C'];
 
     document.addEventListener('keydown', (event) => {
-      if(keys.includes(event.key.toUpperCase()) && powerRef.current) {
-        playSound(event.key.toUpperCase());
-        updateDisplayValue(document.getElementById(event.key.toUpperCase()).parentElement.id.replace(/-/g, ' '));
+      let selectedKey = event.key.toUpperCase();
+      if(keys.includes(selectedKey) && powerRef.current) {
+        playSound(selectedKey);
+        updateDisplayValue(document.getElementById(selectedKey).parentElement.id.replace(/-/g, ' '));
+        highlightKey(selectedKey);
       }
     });
 
     return () => {
       document.removeEventListener('keydown', (event) => {
-        if(keys.includes(event.key.toUpperCase()) && powerRef.current) {
-          playSound(event.key.toUpperCase());
-          updateDisplayValue(document.getElementById(event.key.toUpperCase()).parentElement.id.replace(/-/g, ' '));
+        let selectedKey = event.key.toUpperCase();
+        if(keys.includes(selectedKey) && powerRef.current) {
+          playSound(selectedKey);
+          updateDisplayValue(document.getElementById(selectedKey).parentElement.id.replace(/-/g, ' '));
+          highlightKey(selectedKey);
         }
       });
     };
@@ -39,7 +57,7 @@ function App() {
     updateDisplayValue(message);
     setTimeout(() => {
       updateDisplayValue('');
-    }, 2000)
+    }, 1000)
     updatePower(newPower);
     powerRef.current = newPower;
   }
@@ -48,7 +66,16 @@ function App() {
     if (power) {
       playSound(key);
       updateDisplayValue(message);
+      highlightKey(key);
     }
+  }
+
+  const highlightKey = (key) => {
+    let keyElement = document.getElementById(key).parentElement;
+    keyElement.style.border = '5px solid #ff0000';
+    setTimeout(() => {
+      keyElement.style.border = '5px solid #600724';
+    }, 500);
   }
 
   return (
@@ -56,7 +83,7 @@ function App() {
       <div id="drum-machine">
         <div id="power">
           <button id="power-btn" onClick={togglePower}>
-            <svg id="power-icon" fill="none" stroke="#ffffff" strokeWidth="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <svg id="power-icon" fill="none" stroke="#ffffff" strokeWidth="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style={powerIconStyle}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9"></path>
             </svg>
           </button>
@@ -136,7 +163,7 @@ function App() {
           </div>
         </div>
         <div id="drum-controls">
-          <div id="display">{displayValue}</div>
+          <div id="display" style={displayStyle}>{displayValue}</div>
         </div>
       </div>
     </>
