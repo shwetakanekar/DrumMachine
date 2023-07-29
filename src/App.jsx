@@ -1,51 +1,68 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
 import './App.css';
 
 function App() {
-  const keys = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C'];
-
+  
   let [displayValue, updateDisplayValue] = useState('');
-
+  let [power, updatePower] = useState(false);
+  let powerRef = useRef(power);
+  
   useEffect(() => {
-    let drumKeys = document.getElementsByClassName('drum-pad');
-    for (let drumKey of drumKeys) {
-      let audioId = drumKey.innerText;
-      drumKey.addEventListener('click', () => {
-        playSound(audioId);
-        updateDisplayValue(drumKey.id.replace(/-/g, ' '));
-      });
-    }
+    const keys = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C'];
 
     document.addEventListener('keydown', (event) => {
-      if(keys.includes(event.key.toUpperCase())) {
+      if(keys.includes(event.key.toUpperCase()) && powerRef.current) {
         playSound(event.key.toUpperCase());
         updateDisplayValue(document.getElementById(event.key.toUpperCase()).parentElement.id.replace(/-/g, ' '));
       }
     });
 
     return () => {
-      for (let drumKey of drumKeys) {
-        let audioId = drumKey.innerText;
-        drumKey.removeEventListener('click', () => playSound(audioId));
-      }
       document.removeEventListener('keydown', (event) => {
-        if(keys.includes(event.key.toUpperCase())) {
+        if(keys.includes(event.key.toUpperCase()) && powerRef.current) {
           playSound(event.key.toUpperCase());
+          updateDisplayValue(document.getElementById(event.key.toUpperCase()).parentElement.id.replace(/-/g, ' '));
         }
       });
     };
-  });
+  }, [power]);
 
   const playSound = (audioId) => {
     let sound = document.getElementById(audioId);
     sound.play();
   };
 
+  const togglePower = () => {
+    let newPower = !power;
+    let message = 'Power ' + (newPower ? 'ON' : 'OFF');
+    updateDisplayValue(message);
+    setTimeout(() => {
+      updateDisplayValue('');
+    }, 2000)
+    updatePower(newPower);
+    powerRef.current = newPower;
+  }
+
+  const keyPress = (key, message) => {
+    if (power) {
+      playSound(key);
+      updateDisplayValue(message);
+    }
+  }
+
   return (
     <>
       <div id="drum-machine">
+        <div id="power">
+          <button id="power-btn" onClick={togglePower}>
+            <svg id="power-icon" fill="none" stroke="#ffffff" strokeWidth="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9"></path>
+            </svg>
+          </button>
+        </div>
         <div id="drum-keys">
-          <div className="drum-pad" id="heater-1">
+          <div className="drum-pad" id="heater-1" onClick={() => keyPress('Q', 'heater 1')}>
             <audio
               src="https://s3.amazonaws.com/freecodecamp/drums/Heater-1.mp3"
               className="clip"
@@ -53,7 +70,7 @@ function App() {
             ></audio>
             Q
           </div>
-          <div className="drum-pad" id="heater-2">
+          <div className="drum-pad" id="heater-2" onClick={() => keyPress('W', 'heater 2')}>
             <audio
               src="https://s3.amazonaws.com/freecodecamp/drums/Heater-2.mp3"
               className="clip"
@@ -61,7 +78,7 @@ function App() {
             ></audio>
             W
           </div>
-          <div className="drum-pad" id="heater-3">
+          <div className="drum-pad" id="heater-3" onClick={() => keyPress('E', 'heater 3')}>
             <audio
               src="https://s3.amazonaws.com/freecodecamp/drums/Heater-3.mp3"
               className="clip"
@@ -69,7 +86,7 @@ function App() {
             ></audio>
             E
           </div>
-          <div className="drum-pad" id="heater-4">
+          <div className="drum-pad" id="heater-4" onClick={() => keyPress('A', 'heater 4')}>
             <audio
               src="https://s3.amazonaws.com/freecodecamp/drums/Heater-4_1.mp3"
               className="clip"
@@ -77,7 +94,7 @@ function App() {
             ></audio>
             A
           </div>
-          <div className="drum-pad" id="clap">
+          <div className="drum-pad" id="clap" onClick={() => keyPress('S', 'clap')}>
             <audio
               src="https://s3.amazonaws.com/freecodecamp/drums/Heater-6.mp3"
               className="clip"
@@ -85,7 +102,7 @@ function App() {
             ></audio>
             S
           </div>
-          <div className="drum-pad" id="open-HH">
+          <div className="drum-pad" id="open-HH" onClick={() => keyPress('D', 'open HH')}>
             <audio
               src="https://s3.amazonaws.com/freecodecamp/drums/Dsc_Oh.mp3"
               className="clip"
@@ -93,7 +110,7 @@ function App() {
             ></audio>
             D
           </div>
-          <div className="drum-pad" id="kick-n-hat">
+          <div className="drum-pad" id="kick-n-hat" onClick={() => keyPress('Z', 'kick n hat')}>
             <audio
               src="https://s3.amazonaws.com/freecodecamp/drums/Kick_n_Hat.mp3"
               className="clip"
@@ -101,7 +118,7 @@ function App() {
             ></audio>
             Z
           </div>
-          <div className="drum-pad" id="kick">
+          <div className="drum-pad" id="kick" onClick={() => keyPress('X', 'kick')}>
             <audio
               src="https://s3.amazonaws.com/freecodecamp/drums/RP4_KICK_1.mp3"
               className="clip"
@@ -109,7 +126,7 @@ function App() {
             ></audio>
             X
           </div>
-          <div className="drum-pad" id="closed-HH">
+          <div className="drum-pad" id="closed-HH" onClick={() => keyPress('C', 'closed HH')}>
             <audio
               src="https://s3.amazonaws.com/freecodecamp/drums/Cev_H2.mp3"
               className="clip"
